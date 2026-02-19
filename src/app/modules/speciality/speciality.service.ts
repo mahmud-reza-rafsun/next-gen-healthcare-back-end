@@ -22,7 +22,6 @@ const deleteSpecialty = async (id: string): Promise<Speciality> => {
 }
 
 const updateSpeciality = async (id: string, data: Partial<Speciality>): Promise<Speciality> => {
-    console.log("Hello",{id, data})
     const speciality = await prisma.speciality.update({
         where: { id },
         data

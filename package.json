@@ -11,7 +11,7 @@
     "migrate": "prisma migrate dev",
     "generate": "prisma generate",
     "studio": "prisma studio",
-    "push" : "prisma db push",
+    "push": "prisma db push",
     "pull": "prisma db pull",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -22,9 +22,13 @@
   "dependencies": {
     "@prisma/adapter-pg": "^7.4.0",
     "@prisma/client": "^7.4.0",
+    "better-auth": "^1.4.18",
     "dotenv": "^17.3.1",
     "express": "^5.2.1",
-    "pg": "^8.18.0"
+    "http-errors": "^2.0.1",
+    "http-status": "^2.1.0",
+    "pg": "^8.18.0",
+    "zod": "^4.3.6"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.2",
