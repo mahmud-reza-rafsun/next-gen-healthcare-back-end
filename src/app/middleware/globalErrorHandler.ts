@@ -5,8 +5,6 @@ import z from "zod";
 import { TErrorResponse, TErrorSourse } from "../interface/error.interface";
 import { handleZodError } from "../errorHelpers/handleZodError";
 
-
-
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
     if (envVars.NODE_ENV === "development") {
@@ -16,17 +14,24 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
     let errorSources: TErrorSourse[] = [];
     let statusCode: number = status.INTERNAL_SERVER_ERROR
     let message: string = `Internal Server Error`
+    let stack: string | undefined = undefined
 
     if (err instanceof z.ZodError) {
         const simplefiedError = handleZodError(err)
         statusCode = simplefiedError.statusCode as number
         message = simplefiedError.message
         errorSources = [...simplefiedError.errorSources]
+    } else if (err instanceof Error) {
+        statusCode = status.BAD_REQUEST
+        message = err.message
+        stack = err.stack
     }
+
     const errorResponse: TErrorResponse = {
         success: false,
         message,
         errorSources,
+        stack: envVars.NODE_ENV === "development" ? stack : undefined,
         error: envVars.NODE_ENV === "development" ? err : undefined
     }
     res.status(statusCode).json(errorResponse);
