@@ -1,9 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-expressions */
 import { NextFunction, Request, Response } from "express";
 import { envVars } from "../config/env";
 import { status } from "http-status";
 import z from "zod";
 import { TErrorResponse, TErrorSourse } from "../interface/error.interface";
 import { handleZodError } from "../errorHelpers/handleZodError";
+import AppError from "../errorHelpers/AppError";
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/no-unused-vars
 export const globalErrorHandler = (err: any, req: Request, res: Response, next: NextFunction) => {
@@ -21,10 +23,27 @@ export const globalErrorHandler = (err: any, req: Request, res: Response, next: 
         statusCode = simplefiedError.statusCode as number
         message = simplefiedError.message
         errorSources = [...simplefiedError.errorSources]
-    } else if (err instanceof Error) {
+    } else if (err instanceof AppError) {
+        statusCode = err.statusCode;
+        message = err.message;
+        stack = err.stack;
+        errorSources = [
+            {
+                path: '',
+                message: err.message
+            }
+        ]
+    }
+    else if (err instanceof Error) {
         statusCode = status.BAD_REQUEST
         message = err.message
-        stack = err.stack
+        stack = err.stack;
+        errorSources = [
+            {
+                path: '',
+                message: err.message
+            }
+        ]
     }
 
     const errorResponse: TErrorResponse = {

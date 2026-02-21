@@ -3,6 +3,7 @@ import { catchAsync } from "../../shared/catchAsync";
 import { DoctorService } from "./doctor.service";
 import { sendResponse } from "../../shared/sendResponse";
 import status from "http-status";
+import AppError from "../../errorHelpers/AppError";
 
 const getAllDoctors = catchAsync(
     async (req: Request, res: Response) => {
@@ -16,6 +17,54 @@ const getAllDoctors = catchAsync(
     }
 );
 
+const getDoctorById = catchAsync(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        console.log(id)
+        const doctors = await DoctorService.getDoctorById(id as string)
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "retrieved single doctor successfully",
+            data: doctors
+        })
+    }
+);
+
+const updateDoctor = catchAsync(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        if (!id) {
+            throw new AppError(status.NOT_FOUND, "Doctor id not found");
+        }
+        const payload = req.body;
+        const updatedDoctor = await DoctorService.updateDoctor(id as string, payload);
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "Doctor updated successfully",
+            data: updatedDoctor
+        });
+    }
+);
+
+const deleteDoctor = catchAsync(
+    async (req: Request, res: Response) => {
+        const { id } = req.params;
+        const deleteDoctor = await DoctorService.deleteDoctor(id as string);
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "Doctor delete successfully",
+            data: deleteDoctor
+        })
+    }
+)
+
+
 export const DoctorController = {
-    getAllDoctors
+    getAllDoctors,
+    getDoctorById,
+    updateDoctor,
+    deleteDoctor
 };

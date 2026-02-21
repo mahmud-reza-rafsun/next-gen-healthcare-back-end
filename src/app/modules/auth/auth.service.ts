@@ -1,12 +1,10 @@
+import status from "http-status";
 import { UserStatus } from "../../../generated/prisma/browser";
+import AppError from "../../errorHelpers/AppError";
 import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
-
-interface IRegisterPatientPayload {
-    name: string,
-    email: string,
-    password: string
-}
+import { ILoginUserPayload, IRegisterPatientPayload } from "./auth.interface";
+import { tokenUtils } from "../../utils/token";
 
 export const registerPatient = async (payload: IRegisterPatientPayload) => {
     const { name, email, password } = payload;
@@ -21,7 +19,7 @@ export const registerPatient = async (payload: IRegisterPatientPayload) => {
     });
 
     if (!data.user) {
-        throw new Error("Failed to Register Patient");
+        throw new AppError(status.BAD_REQUEST, "Failed to Register Patient");
     }
 
     try {
@@ -35,7 +33,28 @@ export const registerPatient = async (payload: IRegisterPatientPayload) => {
             });
             return patientProfile;
         })
+        const accessToken = tokenUtils.getAccessToken({
+            userId: data.user.id,
+            role: data.user.role,
+            email: data.user.email,
+            name: data.user.name,
+            status: data.user.status,
+            isDeleted: data.user.isDeleted,
+            emailVerified: data.user.emailVerified
+        });
+
+        const refreshToken = tokenUtils.getRefreshToken({
+            userId: data.user.id,
+            role: data.user.role,
+            email: data.user.email,
+            name: data.user.name,
+            status: data.user.status,
+            isDeleted: data.user.isDeleted,
+            emailVerified: data.user.emailVerified
+        });
         return {
+            accessToken,
+            refreshToken,
             ...data,
             patient
         };
@@ -51,11 +70,6 @@ export const registerPatient = async (payload: IRegisterPatientPayload) => {
 
 };
 
-interface ILoginUserPayload {
-    email: string,
-    password: string
-}
-
 const loginUser = async (payload: ILoginUserPayload) => {
     const { email, password } = payload;
     const data = await auth.api.signInEmail({
@@ -66,12 +80,38 @@ const loginUser = async (payload: ILoginUserPayload) => {
     });
 
     if (data.user.status === UserStatus.BLOCKED) {
-        throw new Error("Your account has been blocked. Please contact support for assistance.");
+        throw new AppError(status.FORBIDDEN, "Your account has been blocked. Please contact support for assistance.")
     }
     if (data.user.isDeleted || data.user.status === UserStatus.DELETED) {
-        throw new Error("Your account has been deleted. Please contact support for assistance.");
+        throw new AppError(status.NOT_FOUND, "Your account has been deleted. Please contact support for assistance.");
     }
-    return data;
+
+    // create session and tokens here and return to user
+    const accessToken = tokenUtils.getAccessToken({
+        userId: data.user.id,
+        role: data.user.role,
+        email: data.user.email,
+        name: data.user.name,
+        status: data.user.status,
+        isDeleted: data.user.isDeleted,
+        emailVerified: data.user.emailVerified
+    });
+
+    const refreshToken = tokenUtils.getRefreshToken({
+        userId: data.user.id,
+        role: data.user.role,
+        email: data.user.email,
+        name: data.user.name,
+        status: data.user.status,
+        isDeleted: data.user.isDeleted,
+        emailVerified: data.user.emailVerified
+    });
+
+    return {
+        ...data,
+        accessToken,
+        refreshToken
+    };
 }
 export const AuthService = {
     registerPatient,
