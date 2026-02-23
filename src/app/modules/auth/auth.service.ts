@@ -5,6 +5,7 @@ import { auth } from "../../lib/auth";
 import { prisma } from "../../lib/prisma";
 import { ILoginUserPayload, IRegisterPatientPayload } from "./auth.interface";
 import { tokenUtils } from "../../utils/token";
+import { IRequestUser } from "../../interface/requestUser.interface";
 
 export const registerPatient = async (payload: IRegisterPatientPayload) => {
     const { name, email, password } = payload;
@@ -113,7 +114,42 @@ const loginUser = async (payload: ILoginUserPayload) => {
         refreshToken
     };
 }
+
+const getMe = async (user: IRequestUser) => {
+    const isUserExist = await prisma.user.findUnique({
+        where: {
+            id: user.userId
+        },
+        include: {
+            patient: {
+                include: {
+                    appointments: true,
+                    reviews: true,
+                    prescriptions: true,
+                    medicalReports: true,
+                    patientHealthData: true
+                }
+            },
+            doctor: {
+                include: {
+                    specilaties: true,
+                    appointments: true,
+                    reviews: true,
+                    prescriptions: true
+                }
+            },
+            admin: true
+        }
+    })
+
+    if (!isUserExist) {
+        throw new AppError(status.NOT_FOUND, "User not found");
+    }
+    return isUserExist;
+}
+
 export const AuthService = {
     registerPatient,
-    loginUser
+    loginUser,
+    getMe
 }

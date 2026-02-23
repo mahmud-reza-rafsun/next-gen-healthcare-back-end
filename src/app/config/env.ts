@@ -1,27 +1,32 @@
 import dotenv from 'dotenv';
+import path from 'path';
 import { EnvConfig } from './env.config.interface';
 import AppError from '../errorHelpers/AppError';
 import status from 'http-status';
 
-dotenv.config();
+dotenv.config({ path: path.join(process.cwd(), '.env') });
 
 const loadEnvVariable = (): EnvConfig => {
-    const loadEnvVariable = [
+    const requiredEnvVars = [
         "NODE_ENV",
         "PORT",
         "DATABASE_URL",
         "BETTER_AUTH_SECRET",
         "BETTER_AUTH_URL",
-        "ACCESS_TOEKN_SECRET",
+        "ACCESS_TOKEN_SECRET",
         "REFRESH_TOKEN_SECRET",
         "ACCESS_TOKEN_EXPIRES_IN",
         "REFRESH_TOKEN_EXPIRES_IN",
         "BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN",
         "BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE"
     ];
-    loadEnvVariable.forEach((variable) => {
+
+    requiredEnvVars.forEach((variable) => {
         if (!process.env[variable]) {
-            throw new AppError(status.INTERNAL_SERVER_ERROR, `Environment Variable ${variable} is required but not set in .env file`)
+            throw new AppError(
+                status.INTERNAL_SERVER_ERROR,
+                `Environment Variable ${variable} is required but not set in .env file`
+            );
         }
     });
 
