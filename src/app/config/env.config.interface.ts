@@ -10,4 +10,11 @@ export interface EnvConfig {
     REFRESH_TOKEN_EXPIRES_IN: string;
     BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN: string;
     BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE: string;
+    EMAIL_SENDER: {
+        SMTP_USER: string,
+        SMTP_PASS: string,
+        SMTP_HOST: string,
+        SMTP_PORT: string,
+        SMTP_FROM: string,
+    }
 }

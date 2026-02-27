@@ -18,7 +18,12 @@ const loadEnvVariable = (): EnvConfig => {
         "ACCESS_TOKEN_EXPIRES_IN",
         "REFRESH_TOKEN_EXPIRES_IN",
         "BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN",
-        "BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE"
+        "BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE",
+        "EMIAL_SENDER_SMTP_USER",
+        "EMIAL_SENDER_SMTP_PASS",
+        "EMIAL_SENDER_SMTP_HOST",
+        "EMIAL_SENDER_SMTP_PORT",
+        "EMIAL_SENDER_SMTP_FROM"
     ];
 
     requiredEnvVars.forEach((variable) => {
@@ -41,7 +46,14 @@ const loadEnvVariable = (): EnvConfig => {
         ACCESS_TOKEN_EXPIRES_IN: process.env.ACCESS_TOKEN_EXPIRES_IN as string,
         REFRESH_TOKEN_EXPIRES_IN: process.env.REFRESH_TOKEN_EXPIRES_IN as string,
         BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN: process.env.BETTER_AUTH_SESSION_TOKEN_EXPIRES_IN as string,
-        BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE: process.env.BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE as string
+        BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE: process.env.BETTER_AUTH_SESSION_TOKEN_UPDATE_AGE as string,
+        EMAIL_SENDER: {
+            SMTP_USER: process.env.EMIAL_SENDER_SMTP_USER as string,
+            SMTP_PASS: process.env.EMIAL_SENDER_SMTP_PASS as string,
+            SMTP_HOST: process.env.EMIAL_SENDER_SMTP_HOST as string,
+            SMTP_PORT: process.env.EMIAL_SENDER_SMTP_PORT as string,
+            SMTP_FROM: process.env.EMIAL_SENDER_SMTP_FROM as string,
+        }
     }
 }
 
