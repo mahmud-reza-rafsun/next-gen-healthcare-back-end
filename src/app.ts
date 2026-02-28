@@ -3,9 +3,15 @@ import { IndexRoute } from "./app/router";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
 import { notFound } from "./app/middleware/notFound";
 import cookieParser from "cookie-parser";
+import { toNodeHandler } from "better-auth/node";
+import { auth } from "./app/lib/auth";
 
 
 const app: Application = express();
+
+app.set("view engine", "ejs");
+
+app.use("/api/auth", toNodeHandler(auth))
 
 app.use(express.json());
 app.use(cookieParser());

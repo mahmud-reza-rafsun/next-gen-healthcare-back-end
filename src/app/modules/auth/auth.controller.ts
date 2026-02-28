@@ -7,6 +7,8 @@ import status from "http-status";
 import { tokenUtils } from "../../utils/token";
 import AppError from "../../errorHelpers/AppError";
 import { CookieUtils } from "../../utils/cookie";
+import { envVars } from "../../config/env";
+import { auth } from "../../lib/auth";
 
 const registerPatient = catchAsync(
     async (req: Request, res: Response) => {
@@ -158,6 +160,82 @@ const verifyEmail = catchAsync(
     }
 )
 
+const forgetPassword = catchAsync(
+    async (req: Request, res: Response) => {
+        const { email } = req.body
+        const result = await AuthService.forgetPassword(email);
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "Forget password send in email",
+            data: result
+        })
+    }
+)
+
+const resetPassword = catchAsync(
+    async (req: Request, res: Response) => {
+        const { email, otp, newPassword } = req.body;
+        const result = await AuthService.resetPassword(email, otp, newPassword);
+        sendResponse(res, {
+            httpStatusCode: status.OK,
+            success: true,
+            message: "Password Reset Succesful!!!",
+            data: result
+        })
+    }
+);
+
+
+const googleLogin = catchAsync(
+    async (req: Request, res: Response) => {
+        const redirectPath = req.query.redirect || "/dashboard"
+        const encodedRedirectPath = encodeURIComponent(redirectPath as string);
+
+        const callbackURL = `${envVars.BETTER_AUTH_URL}/api/v1/auth/google/success?redirect${encodedRedirectPath}`
+
+        res.render("googleRedirect", {
+            callbackURL: callbackURL,
+            betterAuthURL: envVars.BETTER_AUTH_URL
+        })
+    }
+);
+
+const googleLoginSuccess = catchAsync(
+    async (req: Request, res: Response) => {
+        const redirectPath = req.query.redirect || "/dashboard"
+        const sessionToken = req.cookies["better-auth.session_token"];
+        if (!sessionToken) {
+            return res.render(`${envVars.FRONTEND_URL}/login?error=oauth_failed`)
+        }
+
+        const session = await auth.api.getSession({
+            headers: {
+                "Cookie": `better-auth.session_token=${sessionToken}`
+            }
+        })
+
+        if (session && !session.user) {
+            return res.render(`${envVars.FRONTEND_URL}/login?error=no_user_found`)
+        }
+
+        const result = await AuthService.googleLoginSuccess(session);
+
+        const { accessToken, refreshToken } = result;
+
+        tokenUtils.setAccessTokenCookie(res, accessToken);
+        tokenUtils.setRefreshTokenCookie(res, refreshToken);
+
+        const isValidRedirect = redirectPath.startWith("/")
+    }
+);
+
+const handleOAuthError = catchAsync(
+    async (req: Request, res: Response) => {
+
+    }
+);
+
 export const AuthController = {
     registerPatient,
     loginUser,
@@ -165,5 +243,10 @@ export const AuthController = {
     getNewToken,
     chnagePassword,
     logout,
-    verifyEmail
+    verifyEmail,
+    forgetPassword,
+    resetPassword,
+    googleLogin,
+    googleLoginSuccess,
+    handleOAuthError
 }
