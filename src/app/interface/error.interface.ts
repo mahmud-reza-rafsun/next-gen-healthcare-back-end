@@ -7,6 +7,7 @@ export interface TErrorResponse {
     statusCode?: number;
     success: boolean;
     message: string;
+    stack?: string;
     errorSources: TErrorSourse[];
     error?: unknown;
 }
