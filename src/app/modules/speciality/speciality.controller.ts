@@ -7,7 +7,12 @@ import status from "http-status";
 
 const createSpeciality = catchAsync(
     async (req: Request, res: Response) => {
-        const payload = req.body;
+        const payload = {
+            ...req.body,
+            icon: req.file?.path
+        };
+        console.log(req.file)
+        console.log(payload)
         const speciality = await SpecialityService.createSpeciality(payload);
         sendResponse(res, {
             httpStatusCode: status.OK,

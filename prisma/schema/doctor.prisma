@@ -1,10 +1,10 @@
 model Doctor {
     id                  String    @id @default(uuid(7))
     name                String
-    email               String
+    email               String    @unique
     profilePhoto        String?
     contactNumber       String?
-    address             String?
+    address             String?   @unique
     isDeleted           Boolean   @default(false)
     deletedAt           DateTime?
     registrationNumber  String    @unique
