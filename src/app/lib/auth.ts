@@ -118,6 +118,12 @@ export const auth = betterAuth({
         }
     },
 
+    redirectURLs: {
+        singi: `${envVars.FRONTEND_URL}/api/v1/auth/google/success`
+    },
+
+    trustedOrigins: [process.env.BETTER_AUTH_URL || envVars.FRONTEND_URL],
+
     advanced: {
         useSecureCookies: false,
         cookies: {

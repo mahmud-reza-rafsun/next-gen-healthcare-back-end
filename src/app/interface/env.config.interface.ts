@@ -21,4 +21,13 @@ export interface EnvConfig {
     GOOGLE_CLIENT_SECRET: string
     GOOGLE_CALLBACK_URL: string,
     FRONTEND_URL: string,
+    CLOUDINARY: {
+        CLOUDINARY_CLOUD_NAME: string,
+        CLOUDINARY_API_KEY: string,
+        CLOUDINARY_API_SECRET: string,
+    },
+    STRIPE: {
+        STRIPE_SECRET_KEY: string,
+        STRIPE_WEBHOOK_SECRET: string,
+    }
 }
