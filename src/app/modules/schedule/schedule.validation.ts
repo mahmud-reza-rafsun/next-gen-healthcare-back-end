@@ -1,31 +1,37 @@
 import z from "zod";
 
-export const createScheduleZodSchema = z.object({
+const createScheduleZodSchema = z.object({
     startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-        message: "Invalid date format. Expected format: YYYY-MM-DD"
+        message: "Invalid date format",
     }),
     endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-        message: "Invalid date format. Expected format: YYYY-MM-DD"
+        message: "Invalid date format",
     }),
-    startTime: z.string().refine((time) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(time), {
-        message: "Invalid time format. Expected format: HH:mm (24-hour)"
+    startTime: z.string().refine((time) => /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(time), {
+        message: "Invalid time format",
     }),
-    endTime: z.string().refine((time) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(time), {
-        message: "Invalid time format. Expected format: HH:mm (24-hour)"
-    })
+    endTime: z.string().refine((time) => /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(time), {
+        message: "Invalid time format",
+    }),
 });
 
-export const updateScheduleZodSchema = z.object({
+
+const updateScheduleZodSchema = z.object({
     startDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-        message: "Invalid date format. Expected format: YYYY-MM-DD"
+        message: "Invalid date format",
     }).optional(),
     endDate: z.string().refine((date) => !isNaN(Date.parse(date)), {
-        message: "Invalid date format. Expected format: YYYY-MM-DD"
+        message: "Invalid date format",
     }).optional(),
-    startTime: z.string().refine((time) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(time), {
-        message: "Invalid time format. Expected format: HH:mm (24-hour)"
+    startTime: z.string().refine((time) => /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(time), {
+        message: "Invalid time format",
     }).optional(),
-    endTime: z.string().refine((time) => /^([01]\d|2[0-3]):([0-5]\d)$/.test(time), {
-        message: "Invalid time format. Expected format: HH:mm (24-hour)"
-    }).optional()
-})
+    endTime: z.string().refine((time) => /^([0-1]?[0-9]|2[0-3]):[0-5][0-9]$/.test(time), {
+        message: "Invalid time format",
+    }).optional(),
+});
+
+export const ScheduleValidation = {
+    createScheduleZodSchema,
+    updateScheduleZodSchema
+};

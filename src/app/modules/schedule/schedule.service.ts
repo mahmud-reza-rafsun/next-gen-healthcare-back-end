@@ -16,7 +16,6 @@ const createSchedule = async (payload: ICreateSchedulePayload) => {
     const lastDate = new Date(endDate);
 
     const schedules = [];
-
     while (currentDate <= lastDate) {
         const startDateTime = new Date(
             addMinutes(
@@ -27,7 +26,6 @@ const createSchedule = async (payload: ICreateSchedulePayload) => {
                 Number(startTime.split(":")[1])
             )
         );
-
         const endDateTime = new Date(
             addMinutes(
                 addHours(
