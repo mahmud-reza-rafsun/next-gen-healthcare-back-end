@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import express, { Application, Request, Response } from "express";
 import { IndexRoute } from "./app/router";
 import { globalErrorHandler } from "./app/middleware/globalErrorHandler";
@@ -9,9 +10,11 @@ import path from "path";
 import cors from "cors"
 import { envVars } from "./app/config/env";
 import { PaymentController } from "./app/modules/payment/payment.controller";
+import cron from "node-cron";
+// import { AppointmentService } from "./app/modules/appointment/appointment.service";
+
 
 const app: Application = express();
-
 
 app.set('view engine', 'ejs');
 app.set("views", path.resolve(process.cwd(), `src/app/templates`));
@@ -33,6 +36,15 @@ app.use("/api/auth", toNodeHandler(auth))
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+
+cron.schedule("*/25 * * * *", async () => {
+    try {
+        console.log("Running daily cleanup task...");
+        // await AppointmentService.cancelUnpaidAppointments();
+    } catch (error: any) {
+        console.log("Error occurred while running daily cleanup task:", error.message);
+    }
+});
 
 app.use("/api/v1/", IndexRoute);
 

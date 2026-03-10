@@ -29,17 +29,18 @@ const getAllDoctors = async (query: IQueryParams) => {
         })
         .include({
             user: true,
-            specilaties: true
-            // specilaties: {
-            //     include: {
-            //         speciality: true
-            //     }
-            // }
+            // specilaties: true
+            specilaties: {
+                include: {
+                    speciality: true
+                }
+            }
         })
         .dynamicInclude(doctorIncludeConfig)
         .paginate()
         .sort()
         .execute();
+    return result;
 }
 
 const getDoctorById = async (id: string) => {

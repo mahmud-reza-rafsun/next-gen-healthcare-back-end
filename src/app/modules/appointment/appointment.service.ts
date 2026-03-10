@@ -7,7 +7,8 @@ import { prisma } from "../../lib/prisma";
 import { AppointmentStatus } from './../../../generated/prisma/enums';
 import { IBookAppointmentPayload } from "./appointment.interface";
 import { IRequestUser } from "../../interface/requestUser.interface";
-import { uuidv7 } from "zod";
+// import { uuidv7 } from "zod";
+import { v7 as uuidv7 } from "uuid";
 
 // Pay Now Book Appointment
 const bookAppointment = async (payload: IBookAppointmentPayload, user: IRequestUser) => {

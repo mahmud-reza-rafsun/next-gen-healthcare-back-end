@@ -4,10 +4,13 @@ import { DoctorService } from "./doctor.service";
 import { sendResponse } from "../../shared/sendResponse";
 import status from "http-status";
 import AppError from "../../errorHelpers/AppError";
+import { IQueryParams } from "../../interface/query.interface";
 
 const getAllDoctors = catchAsync(
     async (req: Request, res: Response) => {
-        const doctors = await DoctorService.getAllDoctors();
+        // use the full query object and assert it matches the expected interface
+        const searchTerm = req.query as IQueryParams;
+        const doctors = await DoctorService.getAllDoctors(searchTerm);
         sendResponse(res, {
             httpStatusCode: status.OK,
             success: true,

@@ -19,7 +19,7 @@ const transporter = nodemailder.createTransport({
 
 export const sendEmail = async ({ subject, templeteData, templeteName, to, attachments }: sendEmailInterface) => {
     try {
-        const templetePath = path.resolve(process.cwd(), `src/app/templetes/${templeteName}.ejs`);
+        const templetePath = path.resolve(process.cwd(), `src/app/templates/${templeteName}.ejs`);
         const html = await ejs.renderFile(templetePath, templeteData);
         const info = await transporter.sendMail({
             from: envVars.EMAIL_SENDER.SMTP_FROM,
